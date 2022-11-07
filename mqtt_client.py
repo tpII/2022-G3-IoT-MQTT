@@ -1,6 +1,6 @@
 import sys
 import paho.mqtt.client as mqtt
-import json
+from json import dump
 
 #broker = localhost
 broker = '192.168.1.100'
@@ -14,7 +14,7 @@ def on_publish(client, userdata, result):
     print("Publicacion realizada sobre el topico \n")
 
 def connect():
-    client = mqtt.Client("Raspberry"))
+    client = mqtt.Client("Raspberry")
     client.on_publish = on_publish
     client.connect(broker, port, KEEPAL)
     client.loop_start()

@@ -1,18 +1,21 @@
 import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
+from events_system import dispatch
 
 BUTTON_GPIO = 10
 LED_GPIO = 21
 
 def press_button_callback(channel):
     print("Boton presionado!")
-    #Publicación MQTT o activar flag
+    data = {"button_pressed" : True}
+    dispatch("pressed_button", data)
 
 def release_button_callback(channel):
     print("Boton soltado!")
-    #Publicación MQTT o activar flag
+    data = {"button_pressed" : False}
+    dispatch("released_button", data)
 
 
-def init():
+def io_init():
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BOARD) # Use physical pin numbering
     button_init()

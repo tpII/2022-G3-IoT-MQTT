@@ -1,41 +1,24 @@
-from mqtt_client import connect, disconnect, pub 
-from io_system import init
+from mqtt_client import connect, disconnect, pub, suscribirse
+from io_system import io_init
+from events_system import register_event, dispatch
 
-io.init()
+io_init()
+register_event("button_pressed", pub)
+register_event("button_released", pub)
+suscribirse()
+
 
 while(True):
-    #Sensar boton (disparado por evento, activa flag)
+    pass
+    #Sensar boton (disparado por evento)
     
-    #Publicaciones (dependiendo el flag)
+    #Publicaciones de botón(disparado por evento)
     
-    try:
-        # no vá aca
-        clientMQTT = connect()
-        data_row = {
-            "button_pressed": True
-        }
-        pub(clientMQTT, data_row)
-        disconnect(clientMQTT)
-
-    except:
-        print("No se ha podido establecer la conexion")
-
-
+    #Publicación de otras cosas (?)
+    
     #Suscripciones
-
 
     #Evaluacion en base a lo recibido
 
-
     #Control de LEDs
 
-
-
-
-
-
-
-
-
-    
-    

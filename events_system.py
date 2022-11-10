@@ -1,15 +1,12 @@
 
 # Lista de diccionarios que contienen como key al evento (string)
 # y como value a las funciones que se llaman ante ese evento.
+events = {}
 
-
-events = {
-    "medicion_alta": [fn1(), fn2()],
-    "boton_presionado": function_boton_presionado()
-
-}
 
 def register_event(event: str, function: callable):
+    # Registra un evento, para su posterior dispatch
+
     handlers = events.get(event)    # handlers posee la lista de funciones de
 
     if handlers is None:
@@ -17,4 +14,14 @@ def register_event(event: str, function: callable):
     else:
         handlers.append(function)
 
-def dispatch()
+
+def dispatch(event: str, data):
+    # Invoca a los controladores/manejadores del evento asociado
+
+    handlers = events.get(event)
+    
+    if event is None:
+        raise ValueError(f"El evento '{event}' no ha sido encontrado.")
+    
+    for handler in handlers:
+        handler(data)

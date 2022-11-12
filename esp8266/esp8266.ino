@@ -10,7 +10,7 @@
 
 const char *ssid = "alumnosInfo"; 
 const char *password = "Informatica2019"; 
-const char* mqtt_server = "163.10.142.221";
+const char* mqtt_server = "163.10.143.55";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -188,7 +188,7 @@ void loop() {
   
   if (now - lastMsg > DELTA) {
     ++value;
-    snprintf (msg, MSG_BUFFER_SIZE, "{\"temperatura\":%ld}", value);
+    snprintf (msg, MSG_BUFFER_SIZE, "{\"temperatura\":%ld,\"humedad\":%ld}", value, value);
     Serial.print("Mensaje publicado: ");
     Serial.println(msg);
     client.publish("arduino/mediciones", msg, MQTTpubQos);

@@ -7,7 +7,7 @@ events = {}
 def register_event(event: str, function: callable):
     # Registra un evento, para su posterior dispatch
 
-    handlers = events.get(event)    # handlers posee la lista de funciones de
+    handlers = events.get(event)    # handlers posee la lista de funciones consumidoras
 
     if handlers is None:
         events[event] = [function]

@@ -1,11 +1,12 @@
-from mqtt_client import connect, disconnect, pub, suscribirse
-from io_system import io_init
+from mqtt_client import connect, publicar, suscribirse
+#from io_system import io_init
 from events_system import register_event, dispatch
 
-io_init()
-register_event("button_pressed", pub)
-register_event("button_released", pub)
-suscribirse()
+#io_init()
+#register_event("button_pressed", publicar)
+#register_event("button_released", publicar)
+cliente = connect()
+suscribirse(cliente)
 
 
 while(True):

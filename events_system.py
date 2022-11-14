@@ -20,8 +20,8 @@ def dispatch(event: str, data):
 
     handlers = events.get(event)
     
-    if event is None:
+    if handlers is None:
         raise ValueError(f"El evento '{event}' no ha sido encontrado.")
-    
-    for handler in handlers:
-        handler(data)
+    else:
+        for handler in handlers:
+            handler(data)

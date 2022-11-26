@@ -16,7 +16,7 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 
 char msg[MSG_BUFFER_SIZE];
-float temperature = 0;
+int temperature = 0;
 unsigned long lastMsg = 0;
 unsigned long startime = 0;
 unsigned long now = 0;
@@ -189,14 +189,14 @@ void loop() {
     //recepcion serie - probar esta verga
     if (Serial.available() > 0) {
     // read the incoming value:
-    temperature = Serial.parseFloat();
+    temperature = Serial.parseFloat();//es entero
 
     // say what you got:
     Serial.print("I received: ");
     Serial.println(temperature, DEC);//se lo devuelvo a el arduino.
   }
     
-    snprintf (msg, MSG_BUFFER_SIZE, "{\"temperatura\":%ld}", value);
+    snprintf (msg, MSG_BUFFER_SIZE, "{\"temperatura\":%ld}", temperature);
     Serial.print("Mensaje publicado: ");
     Serial.println(msg);
     client.publish("arduino/mediciones", msg, MQTTpubQos);

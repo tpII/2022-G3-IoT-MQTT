@@ -1,8 +1,10 @@
 #include <SoftwareSerial.h>
 
 SoftwareSerial SerialEsp (2,3); //rx, tx 
-int data;
-
+char caracter;
+int entero =0;
+float decimal =0.0;
+String dato1,dato2,temp;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -12,20 +14,28 @@ void setup() {
 void loop() {
   
   // put your main code here, to run repeatedly:
-  SerialEsp.write(25);
+  SerialEsp.print("24\n");
   delay(1000);
-  checkSerialCom();
+  serial_recive();
 
 }
 
 
 
-void checkSerialCom(){
+void serial_recive(){
+  //int i =0;
   if (SerialEsp.available() > 0){
     Serial.println("Recibido: ");
     while(SerialEsp.available() > 0){
-      data = (int)SerialEsp.read();
-      Serial.print(data); 
+      caracter = SerialEsp.read();
+      if (caracter == '\n'){
+        break; 
+      }
+      else {
+        temp+= caracter;
+      }
     }
+    Serial.println(temp);
+    temp = "";
   }
 }

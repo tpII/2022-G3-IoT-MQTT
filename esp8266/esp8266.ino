@@ -127,11 +127,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
   if (strncmp(attribute, "led_encendido", attribute_length) == 0) {
     if (strncmp(value, "false", value_length) == 0) {
       //Aqui iría una comunicacion serie con el Arduino
+      Serial.print("false\n");//envio a arduino para apagado del LED
       Serial.print("\nOKEY! Apagare el led!\n\n");
 
     }
     else if (strncmp(value, "true", value_length) == 0, value_length) {
       //Aqui iría una comunicacion serie con el Arduino
+      Serial.print("true\n");//envio a arduino para encendido del LED
       Serial.print("\nOKEY! Encendere el led!\n\n");
 
     } else {
@@ -166,6 +168,8 @@ void reconnect() {
   }
 }
 
+
+
 void setup() {
   
   Serial.begin(115200);
@@ -187,14 +191,6 @@ void loop() {
   }
   if (now - lastMsg > DELTA) {
     //recepcion serie - probar esta verga
-    if (Serial.available() > 0) {
-    // read the incoming value:
-    temperature = Serial.parseFloat();//es entero
-
-    // say what you got:
-    Serial.print("I received: ");
-    Serial.println(temperature, DEC);//se lo devuelvo a el arduino.
-  }
     
     snprintf (msg, MSG_BUFFER_SIZE, "{\"temperatura\":%ld}", temperature);
     Serial.print("Mensaje publicado: ");

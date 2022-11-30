@@ -3,8 +3,8 @@
 
 #define DEBUG//para debug
 
-#define LED
-//#define SENSOR 
+//#define LED
+#define SENSOR 
 
 
 #define DHTPIN 8     // Digital pin connected to the DHT sensor
@@ -16,8 +16,8 @@
 DHT dht(DHTPIN, DHTTYPE); 
 char caracter;
 String estado_led = "false";
-float temperature=0.0;
-float humidity=0.0;
+int temperature=0;
+int humidity=0;
 
 
 
@@ -51,21 +51,22 @@ void loop() {
   delay(5000);//envio de tamperatura cada 5 segundos
   // Reading temperature or humidity takes about 250 milliseconds!
   // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-  humidity = dht.readHumidity(); // lectura de sensor
+  humidity = (int)dht.readHumidity(); // lectura de sensor
   // Read temperature as Celsius (the default)
-  temperature = dht.readTemperature(); // lectura de sensor
+  temperature = (int)dht.readTemperature(); // lectura de sensor
 
   //envio de datos a esp8266 //armar trama
   if (isnan(humidity) || isnan(temperature)) {//error de lectura
-    Serial.print("Hfail");
-    Serial.print("Tfail");
-    Serial.print("\n");
+    esp_serial.print("failH");
+    esp_serial.print("failT");
+    esp_serial.print("\n");
   }else {
-    Serial.print("H");
-    Serial.print(humidity);
-    Serial.print(F("T"));
-    Serial.print(temperature);
-    Serial.print("\n");
+    
+    esp_serial.print(humidity);
+    esp_serial.print(F("H"));
+    esp_serial.print(temperature);
+    esp_serial.print(F("T"));
+    esp_serial.print("\n");
   }
   #endif
 
@@ -73,9 +74,10 @@ void loop() {
   serial_recive();
   if(estado_led == "true"){
     digitalWrite(LEDCONTROL,HIGH);
-  }else{
+  }else if (estado_led == "false"){
      digitalWrite(LEDCONTROL,LOW);
   }
+  //Serial.print(estado_led);
   
   delay(1000);//periodo de un segundo
   #endif
@@ -84,9 +86,10 @@ void loop() {
 
 void serial_recive(){
   String serial_aux= "";
-  if (Serial.available() > 0){
-    while(Serial.available() > 0){
-      caracter = Serial.read();
+  if (esp_serial.available() > 0){
+    while(esp_serial.available() > 0){
+      caracter = esp_serial.read();
+      Serial.println(caracter);
       if (caracter == '\n'){
         break; 
       }
@@ -96,6 +99,9 @@ void serial_recive(){
       if (serial_aux == "false" || serial_aux == "true"){ //descarta basura
         estado_led = serial_aux;//solo escribe un nuevo en el estado si se recibio algo
       }
+      Serial.println("estado Led: "+estado_led+"\n");
+      delay(500);
+      Serial.println("serial aux: "+serial_aux+"\n");
     }
   }
 }

@@ -24,7 +24,7 @@ def on_publish(client, userdata, result):
 
 def suscribirse(cliente):
     cliente.subscribe(in_topic, qos)
-    print(f"Suscripto al tópico {in_topic}")
+    print(f"Suscripto al topico {in_topic}")
 
 
 def publicar(data):

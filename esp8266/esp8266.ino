@@ -8,15 +8,19 @@
 #define MQTTpubQos 0
 
 
-const char *ssid = "alumnosInfo"; 
-const char *password = "Informatica2019"; 
-const char* mqtt_server = "163.10.143.55";
+const char *ssid = "lobito_wifi";//red de casa jeje
+const char *password = "0011462392"; 
+const char* mqtt_server = "192.168.1.3";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
 
+
+String temperature = "0";
+String humidity = "0";
+String serial_data= "";
+
 char msg[MSG_BUFFER_SIZE];
-float temperature = 0;
 unsigned long lastMsg = 0;
 unsigned long startime = 0;
 unsigned long now = 0;
@@ -26,18 +30,18 @@ int start = 0;
 void setup_wifi() {
 
   delay(10);
-  Serial.println();
-  Serial.print("Conectando a ");
-  Serial.println(ssid);
+  //Serial.println();
+  //Serial.print("Conectando a ");
+  //Serial.println(ssid);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    //Serial.print(".");
   }
-  Serial.println("");
-  Serial.println("WiFi conectado");
-  Serial.println("Direccion IP: ");
-  Serial.println(WiFi.localIP());
+  //Serial.println("");
+  //Serial.println("WiFi conectado");
+  //Serial.println("Direccion IP: ");
+  //Serial.println(WiFi.localIP());
 }
 /**
  * Procedimiento que se ejecuta al recibir un mensaje en un topico al cual se esta suscripto
@@ -49,11 +53,11 @@ void callback(char* topic, byte* payload, unsigned int length) {
   char *led_attribute = "{\"led_encendido\"";
   char c;
   int i = 0, j = 0, count = 0, attribute_length = 0, value_length = 0;
-  Serial.print("Mensaje recibido en [");
-  Serial.print(topic);
-  Serial.print("] --> ");
+  //Serial.print("Mensaje recibido en [");
+  //Serial.print(topic);
+  //Serial.print("] --> ");
   for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
+    //Serial.print((char)payload[i]);
   }
   
   //Obtencion de las longitud del atributo y del valor
@@ -112,33 +116,35 @@ void callback(char* topic, byte* payload, unsigned int length) {
     c = (char)payload[i];
   }
 
-  Serial.print("\nAtributo recibido:\n");
+  //Serial.print("\nAtributo recibido:\n");
   for (int i = 0; i < attribute_length; i++) {
-    Serial.print((char)attribute[i]);
+    //Serial.print((char)attribute[i]);
   }
-  Serial.print("\nValor recibido:\n");
+  //Serial.print("\nValor recibido:\n");
   for (int i = 0; i < value_length; i++) {
-    Serial.print((char)value[i]);
+    //Serial.print((char)value[i]);
   }
-  Serial.print("\n");
+  //Serial.print("\n");
 
   //Se verifica que los atributos recibidos son aquellos que el dispositivo espera
   // y que los valores son true o false 
   if (strncmp(attribute, "led_encendido", attribute_length) == 0) {
     if (strncmp(value, "false", value_length) == 0) {
       //Aqui iría una comunicacion serie con el Arduino
-      Serial.print("\nOKEY! Apagare el led!\n\n");
+      Serial.print("false\n");//envio a arduino para apagado del LED
+      //Serial.print("\nOKEY! Apagare el led!\n\n");
 
     }
-    else if (strncmp(value, "true", value_length) == 0, value_length) {
+    else if (strncmp(value, "true", value_length) == 0) {
       //Aqui iría una comunicacion serie con el Arduino
-      Serial.print("\nOKEY! Encendere el led!\n\n");
+      Serial.print("true\n");//envio a arduino para encendido del LED
+      //Serial.print("\nOKEY! Encendere el led!\n\n");
 
     } else {
-      Serial.print("El valor del atributo led_encendido no es true or false\n");
+      //Serial.print("El valor del atributo led_encendido no es true or false\n");
     }
   } else {
-    Serial.print("El atributo recibido no es led_encendido\n");
+    //Serial.print("El atributo recibido no es led_encendido\n");
   }
   free(attribute);
   free(value);
@@ -148,27 +154,56 @@ void callback(char* topic, byte* payload, unsigned int length) {
 void reconnect() {
   // Loop hasta que se reconecte
   while (!client.connected()) {
-    Serial.print("Intentando establecer conexion MQTT...");
+    //Serial.print("Intentando establecer conexion MQTT...");
     String clientId = "Client-";
     clientId += String(random(0xffff), HEX);
     // Intentar conectarse
     if (client.connect(clientId.c_str(), "ESP8266", "")) {
-      Serial.println("Conectado");
+      //Serial.println("Conectado");
       
       //Se suscribe a su topico de entrada
       client.subscribe("arduino/control");
     } else {
-      Serial.print("falla de conexion, rc=");
-      Serial.print(client.state());
-      Serial.println(" intenando de nuevo en 5 segundos");
+      //Serial.print("falla de conexion, rc=");
+      //Serial.print(client.state());
+      //Serial.println(" intenando de nuevo en 5 segundos");
       delay(5000);
     }
   }
 }
 
+void serial_recive(){
+  char caracter = ' ';
+  if (Serial.available() > 0){
+    while(Serial.available() > 0){
+      caracter = Serial.read();
+      if (caracter == '\n'){//leo hasta fin de linea
+        break; 
+      }
+      else {
+        serial_data+= caracter;
+      }
+    }
+    parse_data();
+    serial_data = "";//limpio la variable para proxima lectura
+  }
+}
+
+void parse_data()//parseo de la trama enviada desde el arduino
+{
+  //tomo el indice de los separadores -> 60H26T
+  int index_hum = serial_data.indexOf("H");
+  int index_temp = serial_data.indexOf("T");
+  //alamaceno la info
+  humidity = serial_data.substring (0, index_hum);
+  temperature = serial_data.substring (index_hum+1, index_temp); 
+}
+
+
+
 void setup() {
   
-  Serial.begin(115200);
+  Serial.begin(9600);
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
@@ -185,20 +220,12 @@ void loop() {
     startime = now;
     start = 1;
   }
-  if (now - lastMsg > DELTA) {
-    //recepcion serie - probar esta verga
-    if (Serial.available() > 0) {
-    // read the incoming value:
-    temperature = Serial.parseFloat();
-
-    // say what you got:
-    Serial.print("I received: ");
-    Serial.println(temperature, DEC);//se lo devuelvo a el arduino.
-  }
-    
-    snprintf (msg, MSG_BUFFER_SIZE, "{\"temperatura\":%ld}", temperature);
-    Serial.print("Mensaje publicado: ");
-    Serial.println(msg);
+  if (now - lastMsg > DELTA) {//falta la publicacion de la humedad, pero ya se tiene la info
+    //recepcion serie
+    serial_recive();
+    snprintf (msg, MSG_BUFFER_SIZE, "{\"temperatura\":%s}", temperature);
+    //Serial.print("Mensaje publicado: ");
+    //Serial.println(msg);
     client.publish("arduino/mediciones", msg, MQTTpubQos);
     lastMsg = now;
   }

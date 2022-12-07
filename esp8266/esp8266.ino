@@ -8,9 +8,9 @@
 #define MQTTpubQos 0
 
 
-const char *ssid = "lobito_wifi";//red de casa jeje
-const char *password = "0011462392"; 
-const char* mqtt_server = "192.168.1.3";
+const char *ssid = "pepe";//red de casa jeje
+const char *password = "pepito01"; 
+const char* mqtt_server = "192.168.137.106";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -226,7 +226,7 @@ void loop() {
     snprintf (msg, MSG_BUFFER_SIZE, "{\"temperatura\":%s}", temperature);
     //Serial.print("Mensaje publicado: ");
     //Serial.println(msg);
-    client.publish("arduino/mediciones", msg, MQTTpubQos);
+    //client.publish("arduino/mediciones", msg, MQTTpubQos);
     lastMsg = now;
   }
 }

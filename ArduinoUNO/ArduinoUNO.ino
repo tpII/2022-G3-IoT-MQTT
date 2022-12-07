@@ -3,8 +3,8 @@
 
 #define DEBUG//para debug
 
-//#define LED
-#define SENSOR 
+#define LED
+//#define SENSOR 
 
 
 #define DHTPIN 8     // Digital pin connected to the DHT sensor
@@ -89,7 +89,7 @@ void serial_recive(){
   if (esp_serial.available() > 0){
     while(esp_serial.available() > 0){
       caracter = esp_serial.read();
-      Serial.println(caracter);
+      //Serial.println(caracter);
       if (caracter == '\n'){
         break; 
       }
@@ -99,9 +99,9 @@ void serial_recive(){
       if (serial_aux == "false" || serial_aux == "true"){ //descarta basura
         estado_led = serial_aux;//solo escribe un nuevo en el estado si se recibio algo
       }
-      Serial.println("estado Led: "+estado_led+"\n");
-      delay(500);
-      Serial.println("serial aux: "+serial_aux+"\n");
+      //Serial.println("estado Led: "+estado_led+"\n");
+      //delay(500);
+      //Serial.println("serial aux: "+serial_aux+"\n");
     }
   }
 }

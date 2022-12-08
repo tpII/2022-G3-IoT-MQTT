@@ -14,14 +14,14 @@ def handle_led(data):
         led_toggle()
     pass
 
-def press_button_callback(channel):
+def press_button_callback(cliente):
     print("Boton presionado!")
-    data = "PRESSED"
+    data = (cliente, "PRESSED")
     dispatch("pressed_button", data)
 
-def release_button_callback(channel):
+def release_button_callback(cliente):
     print("Boton soltado!")
-    data = "RELEASED"
+    data = (cliente, "RELEASED")
     dispatch("released_button", data)
 
 
@@ -32,9 +32,8 @@ def io_init():
     leds_init()
 
 def button_init():
-    GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Set pin 10 to be an input pin and set initial value to be pulled low (off)
-    GPIO.add_event_detect(BUTTON_GPIO,GPIO.RISING,callback=press_button_callback) # Setup event on pin 10 rising edge
-    #GPIO.add_event_detect(BUTTON_GPIO,GPIO.FALLING,callback=release_button_callback) # Setup event on pin 10 falling edge
+    GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Set pin 10 to be an input pin and set initial value to be pulled low (off)
+    GPIO.add_event_detect(BUTTON_GPIO,GPIO.BOTH) # Setup event on pin 10 falling and rising edge
 
 def leds_init():
     GPIO.setup(LED_GPIO,GPIO.OUT)

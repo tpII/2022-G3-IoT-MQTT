@@ -29,7 +29,8 @@ def suscribirse(cliente):
 
 def publicar(data):
     cliente= data[0]
-    payload = dumps(data[1])   
+    #payload = dumps(data[1])   
+    payload = data[1]
     info = cliente.publish(out_topic, payload, 1)
 
 def connect():

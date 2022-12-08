@@ -51,8 +51,8 @@ void loop() {
   // Reading temperature or humidity takes about 250 milliseconds!
   // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
   humidity = dht.readHumidity(); // lectura de sensor
-  // Read temperature as Celsius (the default)
-  temperature = dht.readTemperature(); // lectura de sensor
+  //Read temperature as Celsius (the default)
+  temperature = dht.readTemperature(); //lectura de sensor
 
   //envio de datos a esp8266 //armar trama
   if (isnan(humidity) || isnan(temperature)) {//error de lectura

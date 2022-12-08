@@ -6,13 +6,13 @@
 #define LED_BUILTIN 4
 #define DELTA 2000
 #define MQTTpubQos 0
-//#define PUB
-#define SUB
+#define PUB
+//#define SUB
 
 
 const char *ssid = "pepe";//red de casa jeje
 const char *password = "pepito01"; 
-const char* mqtt_server = "192.168.1.3";
+const char* mqtt_server = "192.168.137.106";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -165,7 +165,8 @@ void reconnect() {
       
       //Se suscribe a su topico de entrada
       #ifdef SUB
-      client.subscribe("arduino/control");
+      client.subscribe("arduino/control/leds/azul");
+      client.subscribe("arduino/control/leds/blanco");
       #endif
     } else {
       //Serial.print("falla de conexion, rc=");
@@ -228,12 +229,9 @@ void loop() {
   if (now - lastMsg > DELTA) {
     //recepcion serie
     serial_recive();
-    snprintf (msg, MSG_BUFFER_SIZE, "{\"temperatura\":%s}", temperature);
+    snprintf (msg, MSG_BUFFER_SIZE, "{\"temperatura\":%s,\"humedad\":%s }", temperature, humidity);
     //Serial.print("Mensaje publicado: ");
     //Serial.println(msg);
-    client.publish("arduino/mediciones", msg, MQTTpubQos);//publica temperatura
-    
-    snprintf (msg, MSG_BUFFER_SIZE, "{\"humedad\":%s}",humidity );//publica humedad
     client.publish("arduino/mediciones", msg, MQTTpubQos);
     
     lastMsg = now;

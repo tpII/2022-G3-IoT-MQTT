@@ -1,6 +1,6 @@
 #include <SoftwareSerial.h>
 #include "DHT.h"
-//#define DEBUG//para debug
+#define DEBUG//para debug
 
 #define LED
 //#define SENSOR 
@@ -8,13 +8,14 @@
 
 #define DHTPIN 8     // Digital pin connected to the DHT sensor
 #define DHTTYPE DHT11   // DHT 11
-#define LEDCONTROL 13 //gpio elegido para el control del led
-#define tempLimit 22 //temperatura límite
+#define LEDCONTROL0 13 //gpio elegido para el control del led
+#define LEDCONTROL1 12
 
 //inicialización  para DHT11
 DHT dht(DHTPIN, DHTTYPE); 
 char caracter;
-String estado_led = "false";
+String state_led_white = "WHITE_OFF";
+String state_led_green = "GREEN_OFF";
 float temperature=0;
 float humidity=0;
 
@@ -35,7 +36,8 @@ void setup() {
   #endif
   
   #ifdef LED
-    pinMode(LEDCONTROL, OUTPUT);//codigo arduino LED
+    pinMode(LEDCONTROL0, OUTPUT);//codigo arduino LED
+    pinMode(LEDCONTROL1, OUTPUT);
   #endif
 
 
@@ -71,14 +73,19 @@ void loop() {
 
   #ifdef LED //codigo arduino LED
   serial_recive();
-  if(estado_led == "true"){
-    digitalWrite(LEDCONTROL,HIGH);
-  }else if (estado_led == "false"){
-     digitalWrite(LEDCONTROL,LOW);
+  if(state_led_green =="GREEN_ON"){
+    digitalWrite(LEDCONTROL0,HIGH);
+  }else if (state_led_green == "GREEN_OFF"){
+     digitalWrite(LEDCONTROL0,LOW);
+  }
+  if(state_led_white == "WHITE_ON"){
+    digitalWrite(LEDCONTROL1,HIGH);
+  }else if (state_led_white == "WHITE_OFF"){
+     digitalWrite(LEDCONTROL1,LOW);
   }
   //Serial.print(estado_led);
   
-  delay(1000);//periodo de un segundo
+  delay(500);//periodo de un segundo
   #endif
 
 }
@@ -95,36 +102,13 @@ void serial_recive(){
       else {
         serial_aux+= caracter;
       }
-      if (serial_aux == "false" || serial_aux == "true"){ //descarta basura
-        estado_led = serial_aux;//solo escribe un nuevo en el estado si se recibio algo
+      if (serial_aux == "WHITE_ON" || serial_aux == "WHITE_OFF"){ //descarta basura
+        state_led_white = serial_aux;//solo escribe un nuevo en el estado si se recibio algo
       }
-      //Serial.println("estado Led: "+estado_led+"\n");
-      //delay(500);
-      //Serial.println("serial aux: "+serial_aux+"\n");
+      if (serial_aux == "GREEN_ON" || serial_aux == "GREEN_OFF"){ //descarta basura
+        state_led_green = serial_aux;//solo escribe un nuevo en el estado si se recibio algo
+      }
     }
+    
   }
 }
-
-#ifdef DEBUG
-void serial_recive_debug(){
-  String serial_aux= "";
-  if (Serial.available() > 0){
-    while(Serial.available() > 0){
-      caracter = Serial.read();
-      //Serial.println(caracter);
-      if (caracter == '\n'){
-        break; 
-      }
-      else {
-        serial_aux+= caracter;
-      }
-      if (serial_aux == "false" || serial_aux == "true"){ //descarta basura
-        estado_led = serial_aux;//solo escribe un nuevo en el estado si se recibio algo
-      }
-      //Serial.println("estado Led: "+estado_led+"\n");
-      //delay(500);
-      //Serial.println("serial aux: "+serial_aux+"\n");
-    }
-  }
-}
-#endif

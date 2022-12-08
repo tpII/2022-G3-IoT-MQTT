@@ -3,7 +3,6 @@ from paho.mqtt import client, publish, subscribe
 from events_system import dispatch
 from json import dumps, load
 
-#broker = localhost
 broker = '127.0.0.1'
 port = 1883
 qos = 1
@@ -14,33 +13,37 @@ keepal = 60
 
 
 def on_message(client, userdata, msg):
+    # Funcion manejadora de callback, llamada al recibir un mensaje en el topico de entrada
+
     payload = msg.payload.decode('utf8')
     dispatch("control_received",payload)
     
 
-def on_publish(client, userdata, result):
-    print("Publicacion realizada sobre el topico \n")
-
-
 def suscribirse(cliente):
+    # Funcion de suscripcion a un topico
+
     cliente.subscribe(in_topic, qos)
     print(f"Suscripto al topico {in_topic}")
 
 
 def publicar(data):
-    cliente= data[0]
-    #payload = dumps(data[1])   
+    # Funcion de publicacion en un topico 
+
+    cliente= data[0] 
     payload = data[1]
     info = cliente.publish(out_topic, payload, 1)
 
 def connect():
+    # Funcion de inicializacion del cliente MQTT
+
     cliente = client.Client("Raspberry")
-    cliente.on_publish = on_publish
     cliente.on_message = on_message
     cliente.connect(broker, port, keepal)
     cliente.loop_start()
     return cliente  
 
-def disconnect(client):      
+def disconnect(client):    
+    # Funcion de desconeccion del cliente
+  
     client.loop_stop()
     client.disconnect()

@@ -48,7 +48,7 @@ void setup() {
 void loop() {
   
   #ifdef SENSOR //codigo arduino sensor
-  delay(5000);//envio de tamperatura cada 5 segundos
+  delay(2000);//envio de tamperatura cada 5 segundos
   // Reading temperature or humidity takes about 250 milliseconds!
   // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
   humidity = (int)dht.readHumidity(); // lectura de sensor
@@ -105,3 +105,27 @@ void serial_recive(){
     }
   }
 }
+
+#ifdef DEBUG
+void serial_recive_debug(){
+  String serial_aux= "";
+  if (Serial.available() > 0){
+    while(Serial.available() > 0){
+      caracter = Serial.read();
+      //Serial.println(caracter);
+      if (caracter == '\n'){
+        break; 
+      }
+      else {
+        serial_aux+= caracter;
+      }
+      if (serial_aux == "false" || serial_aux == "true"){ //descarta basura
+        estado_led = serial_aux;//solo escribe un nuevo en el estado si se recibio algo
+      }
+      //Serial.println("estado Led: "+estado_led+"\n");
+      //delay(500);
+      //Serial.println("serial aux: "+serial_aux+"\n");
+    }
+  }
+}
+#endif

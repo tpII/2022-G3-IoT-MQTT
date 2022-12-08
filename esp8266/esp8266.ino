@@ -6,6 +6,8 @@
 #define LED_BUILTIN 4
 #define DELTA 2000
 #define MQTTpubQos 0
+#define PUB
+#define SUB
 
 
 const char *ssid = "pepe";//red de casa jeje
@@ -162,7 +164,9 @@ void reconnect() {
       //Serial.println("Conectado");
       
       //Se suscribe a su topico de entrada
+      #ifdef SUB
       client.subscribe("arduino/control");
+      #endif
     } else {
       //Serial.print("falla de conexion, rc=");
       //Serial.print(client.state());
@@ -220,13 +224,21 @@ void loop() {
     startime = now;
     start = 1;
   }
-  if (now - lastMsg > DELTA) {//falta la publicacion de la humedad, pero ya se tiene la info
+  #ifdef PUB
+  if (now - lastMsg > DELTA) {
     //recepcion serie
     serial_recive();
     snprintf (msg, MSG_BUFFER_SIZE, "{\"temperatura\":%s}", temperature);
     //Serial.print("Mensaje publicado: ");
     //Serial.println(msg);
-    //client.publish("arduino/mediciones", msg, MQTTpubQos);
+    client.publish("arduino/mediciones", msg, MQTTpubQos);//publica temperatura
+    
+    snprintf (msg, MSG_BUFFER_SIZE, "{\"humedad\":%s}",humidity );//publica humedad
+    client.publish("arduino/mediciones", msg, MQTTpubQos);
+    
     lastMsg = now;
   }
+  delay(2000);
+  #endif
+  
 }

@@ -6,13 +6,13 @@
 #define LED_BUILTIN 4
 #define DELTA 2000
 #define MQTTpubQos 0
-#define PUB
+//#define PUB
 #define SUB
 
 
 const char *ssid = "pepe";//red de casa jeje
 const char *password = "pepito01"; 
-const char* mqtt_server = "192.168.137.106";
+const char* mqtt_server = "192.168.1.3";
 
 WiFiClient espClient;
 PubSubClient client(espClient);

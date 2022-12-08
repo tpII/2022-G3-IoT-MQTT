@@ -118,35 +118,28 @@ void callback(char* topic, byte* payload, unsigned int length) {
     c = (char)payload[i];
   }
 
-  //Serial.print("\nAtributo recibido:\n");
-  for (int i = 0; i < attribute_length; i++) {
-    //Serial.print((char)attribute[i]);
-  }
-  //Serial.print("\nValor recibido:\n");
-  for (int i = 0; i < value_length; i++) {
-    //Serial.print((char)value[i]);
-  }
-  //Serial.print("\n");
-
   //Se verifica que los atributos recibidos son aquellos que el dispositivo espera
   // y que los valores son true o false 
   if (strncmp(attribute, "led_encendido", attribute_length) == 0) {
     if (strncmp(value, "false", value_length) == 0) {
       //Aqui iría una comunicacion serie con el Arduino
-      Serial.print("false\n");//envio a arduino para apagado del LED
-      //Serial.print("\nOKEY! Apagare el led!\n\n");
-
+      if (strcmp(topic, "arduino/control/leds/verde") == 0){
+        Serial.print("GREEN_OFF\n");//envio a arduino para apagado del LED
+      }
+      if (strcmp(topic, "arduino/control/leds/blanco") == 0){
+        Serial.print("WHITE_OFF\n");//envio a arduino para apagado del LED
+      }
     }
     else if (strncmp(value, "true", value_length) == 0) {
       //Aqui iría una comunicacion serie con el Arduino
-      Serial.print("true\n");//envio a arduino para encendido del LED
-      //Serial.print("\nOKEY! Encendere el led!\n\n");
-
-    } else {
-      //Serial.print("El valor del atributo led_encendido no es true or false\n");
-    }
-  } else {
-    //Serial.print("El atributo recibido no es led_encendido\n");
+      if (strcmp(topic, "arduino/control/leds/verde") == 0){
+        Serial.print("GREEN_ON\n");//envio a arduino para apagado del LED
+      }
+      if (strcmp(topic, "arduino/control/leds/blanco") == 0){
+        Serial.print("WHITE_ON\n");//envio a arduino para apagado del LED
+      }
+    }  
+    
   }
   free(attribute);
   free(value);

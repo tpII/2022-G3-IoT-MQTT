@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactSwitch from "react-switch";
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
@@ -6,26 +6,53 @@ import Card from 'react-bootstrap/Card';
 import './styles.css'
 import { Row } from "react-bootstrap";
 
-const mqtt = require('mqtt/dist/mqtt')
-const pub = mqtt.connect('ws://192.168.137.106:9001')
-
 
 export function Switch(){
-  const [redLED, setRedLED] = useState(false);
-  const [blueLED, setBlueLED] = useState(false);
+  const [whiteLED, setWhiteLED] = useState(false);
   const [greenLED, setGreenLED] = useState(false);
+  const [redLED, setRedLED] = useState(false);
+  const [button, setButton] = useState(false)
   
+  
+  const change = (color) => {
+    const mqtt = require('mqtt/dist/mqtt')
+    const pub = mqtt.connect('ws://192.168.137.106:9001')
+    let state
+
+    if (color === "verde"){
+      state = !greenLED;
+      setGreenLED(state)
+    }
+    else if (color === "blanco"){
+      state = !whiteLED
+      setWhiteLED(state)
+    }
+    pub.publish(`arduino/control/leds/${color}`, `{\"led_encendido\":${state}}`)
+    console.log("enviado " + state)  
+  }
   const redChange = () => {
-    pub.publish('arduino/control', "{\"led_encendido\":"+!redLED.toString()+"}")
-    console.log("enviado " + !redLED)  
-    setRedLED(!redLED)
-      
-  }
-  const blueChange = () => {
-    setBlueLED(!blueLED)
+    const mqtt = require('mqtt/dist/mqtt')
+    const pub = mqtt.connect('ws://192.168.137.106:9001')
+    let state = !redLED
+    if (state) {
+      pub.publish('raspberry/control/led', "ON")
+    }
+    else pub.publish('raspberry/control/led', "OFF")
+    setRedLED(state)
   }
 
-
+  useEffect(()=>{
+      const mqtt = require ('mqtt/dist/mqtt')
+      const sub = mqtt.connect('ws://192.168.137.106:9001')
+      sub.on('connect', ()=> {
+          console.log("conectado");
+          sub.subscribe('raspberry/mediciones/boton')})
+      sub.on("message", (topic, payload) => {
+          let state = payload.toString()
+          if (state === "PRESSED") setButton(true)
+          else if (state === "RELEASED") setButton(false)
+          console.log(state)})
+  }, [])
 
 
   return (
@@ -34,20 +61,14 @@ export function Switch(){
       <Col sm={6}>
       <Card bg={"dark"} border="secondary" >
      <Card.Title><h3>Raspberry</h3></Card.Title>
-     <Card.Body>LED Verde <ReactSwitch
-        checked={greenLED}
+     <Card.Body><Row><Col>Botón<ReactSwitch
+        checked={button}
+        onChange = {()=>{}}
         className="react-switch"
-        disabled="true"
+        onColor="#DDDD00"
       />
-      </Card.Body>
-      </Card>
       </Col>
       <Col>
-      <Card bg={"dark"} border="secondary">
-      <Card.Title><h3>Arduino</h3></Card.Title>
-      <Card.Body>
-      <Row>
-        <Col>
      <label>LED Rojo<ReactSwitch
         onChange={() => 
           redChange()
@@ -58,13 +79,35 @@ export function Switch(){
       />
       </label>
       </Col>
+      </Row>
+      </Card.Body>
+      </Card>
+      </Col>
       <Col>
-     <label>LED Azul<ReactSwitch
-        onChange={() => blueChange()}
-        checked={blueLED}
-        onColor="#0000FF"
+      <Card bg={"dark"} border="secondary">
+      <Card.Title><h3>Arduino</h3></Card.Title>
+      <Card.Body>
+      <Row>
+        <Col>
+     <label>LED Blanco<ReactSwitch
+        onChange={() => 
+          change("blanco")
+        }
+        checked={whiteLED}
         className="react-switch"
-      /></label>
+        onColor="#CCCCCC"
+      />
+      </label>
+      </Col>
+      <Col>
+     <label>LED Verde<ReactSwitch
+        onChange={() => 
+          change("verde")
+        }
+        checked={greenLED}
+        className="react-switch"
+      />
+      </label>
       </Col>
       </Row>
       </Card.Body>

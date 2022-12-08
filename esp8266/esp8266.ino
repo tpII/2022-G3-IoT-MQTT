@@ -6,8 +6,8 @@
 #define LED_BUILTIN 4
 #define DELTA 2000
 #define MQTTpubQos 0
-#define PUB
-//#define SUB
+//#define PUB
+#define SUB
 
 
 const char *ssid = "pepe";//red de casa jeje
@@ -158,7 +158,7 @@ void reconnect() {
       
       //Se suscribe a su topico de entrada
       #ifdef SUB
-      client.subscribe("arduino/control/leds/azul");
+      client.subscribe("arduino/control/leds/verde");
       client.subscribe("arduino/control/leds/blanco");
       #endif
     } else {

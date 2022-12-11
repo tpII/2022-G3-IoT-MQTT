@@ -2,13 +2,8 @@ import GaugeChart from 'react-gauge-chart';
 import React, {useEffect, useState} from "react";
 import { Card } from 'react-bootstrap';
 
-const chartStyle = {
-    height: '75%',
-    width: '75%'
-  }
-
 export function Humidity(){
-  const [humedad, setHumedad] = useState(70)
+  const [humedad, setHumedad] = useState(20)
   let json = {humedad}
   useEffect(()=>{
       const mqtt = require('mqtt/dist/mqtt')

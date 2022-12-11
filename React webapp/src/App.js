@@ -1,5 +1,3 @@
-
-import React, { useEffect } from "react";
 import './App.css';
 import {Gauge} from './Gauge'
 import {Humidity} from './Humidity'
@@ -11,11 +9,6 @@ import Card from 'react-bootstrap/Card';
 
 
 function App() {
-
-
-
-
-
   return (
     <div className="App">
       <div className="App-header">
@@ -28,7 +21,6 @@ function App() {
       <Row style={{margin:'35px'}}>
         <Switch></Switch>
       </Row>
-     
     <Row>
         <Col><Gauge></Gauge></Col>
         <Col><Humidity></Humidity></Col>

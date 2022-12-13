@@ -122,21 +122,19 @@ void callback(char* topic, byte* payload, unsigned int length) {
   // y que los valores son true o false 
   if (strncmp(attribute, "led_encendido", attribute_length) == 0) {
     if (strncmp(value, "false", value_length) == 0) {
-      //Aqui iría una comunicacion serie con el Arduino
       if (strcmp(topic, "arduino/control/leds/verde") == 0){
-        Serial.print("GREEN_OFF\n");//envio a arduino para apagado del LED
+        Serial.print("GREEN_OFF\n");//envio a arduino para apagado del LED verde
       }
       if (strcmp(topic, "arduino/control/leds/blanco") == 0){
-        Serial.print("WHITE_OFF\n");//envio a arduino para apagado del LED
+        Serial.print("WHITE_OFF\n");//envio a arduino para apagado del LED blanco
       }
     }
     else if (strncmp(value, "true", value_length) == 0) {
-      //Aqui iría una comunicacion serie con el Arduino
       if (strcmp(topic, "arduino/control/leds/verde") == 0){
-        Serial.print("GREEN_ON\n");//envio a arduino para apagado del LED
+        Serial.print("GREEN_ON\n");//envio a arduino para apagado del LED verde
       }
       if (strcmp(topic, "arduino/control/leds/blanco") == 0){
-        Serial.print("WHITE_ON\n");//envio a arduino para apagado del LED
+        Serial.print("WHITE_ON\n");//envio a arduino para apagado del LED blanco
       }
     }  
     

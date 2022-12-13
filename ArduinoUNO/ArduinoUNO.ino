@@ -85,7 +85,7 @@ void loop() {
   }
   //Serial.print(estado_led);
   
-  delay(500);//periodo de un segundo
+  delay(500);//periodo de medio segundo
   #endif
 
 }
